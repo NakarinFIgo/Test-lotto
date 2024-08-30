@@ -19,7 +19,9 @@ const LotteryPage = () => {
       (parseInt(firstPrize) - 1).toString().padStart(3, "0"),
       (parseInt(firstPrize) + 1).toString().padStart(3, "0"),
     ];
-    const lastTwoDigitsPrize = (Math.floor(Math.random() * 100)).toString().padStart(2, '0');
+    const lastTwoDigitsPrize = Math.floor(Math.random() * 100)
+      .toString()
+      .padStart(2, "0");
     const newResults = {
       firstPrize,
       secondPrizes,
@@ -37,30 +39,25 @@ const LotteryPage = () => {
       results;
     let prizeMessage = "ไม่ถูกรางวัล";
     let win = false;
-    console.log(lotteryNumber);
-    console.log(firstPrize);
+
     if (lotteryNumber == firstPrize) {
       if (win) prizeMessage += "และ";
-      console.log("firstPrize: " + firstPrize);
       prizeMessage += "รางวัลที่ 1 ";
       win = true;
     }
     if (lotteryNumber.slice(-2) == lastTwoDigitsPrize) {
       if (win) prizeMessage += "และ";
       prizeMessage += "รางวัลเลขท้าย 2 ตัว";
-      console.log("lastTwoDigitsPrize: " + lastTwoDigitsPrize);
       win = true;
     }
     if (nearbyPrizes.includes(lotteryNumber)) {
       if (win) prizeMessage += "และ";
       prizeMessage += "รางวัลเลขข้างเคียง ";
-      console.log("nearbyPrizes: " + nearbyPrizes);
       win = true;
     }
     if (secondPrizes.includes(lotteryNumber)) {
       if (win) prizeMessage += "และ";
       prizeMessage += "รางวัลที่ 2 ";
-      console.log("secondPrizes: " + secondPrizes);
       win = true;
     }
     if (win) {
