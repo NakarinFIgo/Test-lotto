@@ -1,23 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const LotteryPage = () => {
   const [results, setResults] = useState(() => {
-    const savedResults = localStorage.getItem('lotteryResults');
+    const savedResults = localStorage.getItem("lotteryResults");
     return savedResults ? JSON.parse(savedResults) : null;
   });
-  const [lotteryNumber, setLotteryNumber] = useState('');
-  const [message, setMessage] = useState('');
+  const [lotteryNumber, setLotteryNumber] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleDraw = () => {
-    const randomNumber = () => Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    const randomNumber = () =>
+      Math.floor(Math.random() * 1000)
+        .toString()
+        .padStart(3, "0");
     const firstPrize = randomNumber();
     const secondPrizes = Array.from({ length: 3 }, randomNumber);
     const nearbyPrizes = [
-      (parseInt(firstPrize) - 1).toString().padStart(3, '0'),
-      (parseInt(firstPrize) + 1).toString().padStart(3, '0'),
+      (parseInt(firstPrize) - 1).toString().padStart(3, "0"),
+      (parseInt(firstPrize) + 1).toString().padStart(3, "0"),
     ];
     const lastTwoDigitsPrize = (Math.floor(Math.random() * 100)).toString().padStart(2, '0');
-
     const newResults = {
       firstPrize,
       secondPrizes,
@@ -26,26 +28,54 @@ const LotteryPage = () => {
     };
 
     setResults(newResults);
-    localStorage.setItem('lotteryResults', JSON.stringify(newResults));
+    localStorage.setItem("lotteryResults", JSON.stringify(newResults));
   };
 
   const handleCheck = () => {
     if (!results) return;
-    const { firstPrize, secondPrizes, nearbyPrizes, lastTwoDigitsPrize } = results;
-    let prizeMessage = 'ไม่ถูกรางวัล';
-
-    if (lotteryNumber === firstPrize) prizeMessage = 'ถูกรางวัลที่ 1';
-    else if (secondPrizes.includes(lotteryNumber)) prizeMessage = 'ถูกรางวัลที่ 2';
-    else if (nearbyPrizes.includes(lotteryNumber)) prizeMessage = 'ถูกรางวัลเลขข้างเคียง';
-    else if (lotteryNumber.slice(-2) === lastTwoDigitsPrize) prizeMessage = 'ถูกรางวัลเลขท้าย 2 ตัว';
+    const { firstPrize, secondPrizes, nearbyPrizes, lastTwoDigitsPrize } =
+      results;
+    let prizeMessage = "ไม่ถูกรางวัล";
+    let win = false;
+    console.log(lotteryNumber);
+    console.log(firstPrize);
+    if (lotteryNumber == firstPrize) {
+      if (win) prizeMessage += "และ";
+      console.log("firstPrize: " + firstPrize);
+      prizeMessage += "รางวัลที่ 1 ";
+      win = true;
+    }
+    if (lotteryNumber.slice(-2) == lastTwoDigitsPrize) {
+      if (win) prizeMessage += "และ";
+      prizeMessage += "รางวัลเลขท้าย 2 ตัว";
+      console.log("lastTwoDigitsPrize: " + lastTwoDigitsPrize);
+      win = true;
+    }
+    if (nearbyPrizes.includes(lotteryNumber)) {
+      if (win) prizeMessage += "และ";
+      prizeMessage += "รางวัลเลขข้างเคียง ";
+      console.log("nearbyPrizes: " + nearbyPrizes);
+      win = true;
+    }
+    if (secondPrizes.includes(lotteryNumber)) {
+      if (win) prizeMessage += "และ";
+      prizeMessage += "รางวัลที่ 2 ";
+      console.log("secondPrizes: " + secondPrizes);
+      win = true;
+    }
+    if (win) {
+      prizeMessage = prizeMessage.replace("ไม่ถูกรางวัล", "ถูก");
+    }
 
     setMessage(prizeMessage);
   };
 
   return (
     <div className="container mx-auto mt-8 p-4 bg-gray-100 rounded shadow-lg max-w-xl">
-      <h1 className="text-2xl font-bold text-center mb-4 text-blue-700">รางวัลลอตเตอรี่ Diversition</h1>
-      
+      <h1 className="text-2xl font-bold text-center mb-4 text-blue-700">
+        รางวัลลอตเตอรี่ Diversition
+      </h1>
+
       <button
         className="w-full bg-blue-500 text-white font-semibold py-2 mb-5 rounded hover:bg-blue-600"
         onClick={handleDraw}
@@ -63,25 +93,35 @@ const LotteryPage = () => {
         <tbody>
           <tr>
             <td className="border py-2 font-semibold">รางวัลที่ 1</td>
-            <td className="border py-2">{results?.firstPrize || '-'}</td>
+            <td className="border py-2">{results?.firstPrize || "-"}</td>
           </tr>
           <tr>
-            <td className="border py-2 font-semibold">รางวัลเลขข้างเคียงรางวัลที่ 1</td>
-            <td className="border py-2">{results?.nearbyPrizes.join(', ') || '-'}</td>
+            <td className="border py-2 font-semibold">
+              รางวัลเลขข้างเคียงรางวัลที่ 1
+            </td>
+            <td className="border py-2">
+              {results?.nearbyPrizes.join(", ") || "-"}
+            </td>
           </tr>
           <tr>
             <td className="border py-2 font-semibold">รางวัลที่ 2</td>
-            <td className="border py-2">{results?.secondPrizes.join(', ') || '-'}</td>
+            <td className="border py-2">
+              {results?.secondPrizes.join(", ") || "-"}
+            </td>
           </tr>
           <tr>
             <td className="border py-2 font-semibold">รางวัลเลขท้าย 2 ตัว</td>
-            <td className="border py-2">{results?.lastTwoDigitsPrize || '-'}</td>
+            <td className="border py-2">
+              {results?.lastTwoDigitsPrize || "-"}
+            </td>
           </tr>
         </tbody>
       </table>
 
       <div className="bg-blue-50 p-4 rounded mb-5">
-        <h2 className="text-lg font-bold mb-2">ตรวจรางวัลลอตเตอรี่ Diversition</h2>
+        <h2 className="text-lg font-bold mb-2">
+          ตรวจรางวัลลอตเตอรี่ Diversition
+        </h2>
         <input
           type="text"
           className="w-full p-2 border border-blue-300 rounded mb-3"
@@ -97,7 +137,11 @@ const LotteryPage = () => {
         </button>
       </div>
 
-      {message && <div className="mt-4 p-3 bg-yellow-200 text-yellow-800 font-semibold text-center rounded">{message}</div>}
+      {message && (
+        <div className="mt-4 p-3 bg-yellow-200 text-yellow-800 font-semibold text-center rounded">
+          {message}
+        </div>
+      )}
     </div>
   );
 };
